@@ -1,4 +1,4 @@
-const apiKey = `3cb5405eeaaedbf9c88a33cbdbe393b4`; 
+const apiKey = "bfd2c955c9b9afa0fbb762594c6d790e"; 
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchForm = document.querySelector(".search-form");
