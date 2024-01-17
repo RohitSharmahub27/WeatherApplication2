@@ -28,21 +28,22 @@ async function getWeatherData(city) {
             fetch(forecastUrl)
         ]);
 
-        console.log(weatherResponse); // Log the response to the console
+        if (!weatherResponse.ok || !forecastResponse.ok) {
+            throw new Error("City not found");
+        }
 
         const [weatherData, forecastData] = await Promise.all([
             weatherResponse.json(),
             forecastResponse.json()
         ]);
 
-        // ... rest of the code ...
+        updateWeatherUI(weatherData, forecastData);
     } catch (error) {
         console.error(error.message);
-        // ... rest of the code ...
+        // Display an error message to the user
+        alert("City not found. Please enter a valid city name.");
     }
 }
-
-
 
 function updateWeatherUI(weatherData, forecastData) {
     const weatherInfo = document.querySelector(".weather-info");
