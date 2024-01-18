@@ -1,77 +1,39 @@
-const apiKey = "bfd2c955c9b9afa0fbb762594c6d790e"; 
+const API_KEY = `3cb5405eeaaedbf9c88a33cbdbe393b4`;
+const form = document.querySelector("form");
+const search = document.querySelector("#search");
+const weather = document.querySelector("#weather");
 
-document.addEventListener("DOMContentLoaded", () => {
-    const searchForm = document.querySelector(".search-form");
-    const searchInput = document.getElementById("search");
-    const weatherContainer = document.querySelector(".weather-container");
-
-    searchForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const cityName = searchInput.value.trim();
-        if (cityName !== "") {
-            getWeatherData(cityName);
-            searchInput.value = "";
-        }
-    });
-
-    // Initial weather data for a default city (you can change this)
-    getWeatherData("London");
-});
-
-async function getWeatherData(city) {
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
-    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
-
+const getWeather = async (city) => {
     try {
-        const [weatherResponse, forecastResponse] = await Promise.all([
-            fetch(weatherUrl),
-            fetch(forecastUrl)
-        ]);
+        weather.innerHTML = `<h2>Loading...</h2>`;
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+        const response = await fetch(url);
 
-        if (!weatherResponse.ok || !forecastResponse.ok) {
+        if (!response.ok) {
             throw new Error("City not found");
         }
 
-        const [weatherData, forecastData] = await Promise.all([
-            weatherResponse.json(),
-            forecastResponse.json()
-        ]);
-
-        updateWeatherUI(weatherData, forecastData);
+        const data = await response.json();
+        showWeather(data);
     } catch (error) {
         console.error(error.message);
-        // Display an error message to the user
-        alert("City not found. Please enter a valid city name.");
+        weather.innerHTML = `<h2>City Not Found</h2>`;
     }
-}
+};
 
-function updateWeatherUI(weatherData, forecastData) {
-    const weatherInfo = document.querySelector(".weather-info");
-    const temperature = document.querySelector(".temperature h2");
-    const details = document.querySelector(".details");
-    const forecastContainer = document.querySelector(".forecast");
-
-    // Update current weather information
-    const iconUrl = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`;
-    weatherInfo.innerHTML = `
-        <img src="${iconUrl}" alt="Weather Icon">
-        <div class="temperature">
-            <h2>${Math.round(weatherData.main.temp - 273.15)} ℃</h2>
-            <p>${weatherData.weather[0].description}</p>
+const showWeather = (data) => {
+    weather.innerHTML = `
+        <div>
+            <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="">
+        </div>
+        <div>
+            <h2>${data.main.temp} ℃</h2>
+            <h4>${data.weather[0].main}</h4>
         </div>
     `;
+};
 
-    // Update details
-    details.innerHTML = `
-        <p><i class="fas fa-map-marker-alt"></i> ${weatherData.name}, ${weatherData.sys.country}</p>
-        <p><i class="fas fa-calendar-alt"></i> ${new Date().toLocaleString()}</p>
-        <p><i class="fas fa-cloud"></i> ${weatherData.weather[0].description}</p>
-    `;
-
-    // Update forecast
-    forecastContainer.innerHTML = `
-        <h3>5-Day Forecast</h3>
-        <!-- Add forecast content here -->
-    `;
-    // You can update the forecastContainer with the forecastData as needed
-}
+form.addEventListener("submit", function (event) {
+    getWeather(search.value);
+    event.preventDefault();
+});
