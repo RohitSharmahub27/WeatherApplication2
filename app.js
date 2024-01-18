@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function getWeatherData(city) {
-    const weatherUrl = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
-    const forecastUrl = `http://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
 
     try {
         const [weatherResponse, forecastResponse] = await Promise.all([
