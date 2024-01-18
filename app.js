@@ -37,3 +37,6 @@ form.addEventListener("submit", function (event) {
     getWeather(search.value);
     event.preventDefault();
 });
+
+// Make sure the form's action is set to "#"
+form.setAttribute("action", "#");
